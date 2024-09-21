@@ -11,7 +11,9 @@ public class InvalidPhoneNumberException extends RuntimeException {
 	private final String detail;
 
 	public InvalidPhoneNumberException(String phoneNumber, String detail) {
+		super(detail + ": " + phoneNumber);
 		this.phoneNumber = phoneNumber;
 		this.detail = detail;
+
 	}
 }

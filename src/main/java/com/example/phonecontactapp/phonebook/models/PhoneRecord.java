@@ -12,6 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "phone_contact")
 public class PhoneRecord {
 
 	@Id
@@ -22,6 +23,9 @@ public class PhoneRecord {
 
 	@Column(name = "phone_number", nullable = false)
 	private String phoneNumber;
+
+	@Column(name = "country_code", nullable = false)
+	private String countryCode;
 	
 	@Column(name = "name", nullable = false)
 	private String name;

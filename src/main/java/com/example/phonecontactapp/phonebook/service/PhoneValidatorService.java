@@ -13,7 +13,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Slf4j
 public class PhoneValidatorService {
 
-	private static final String API_URL = "https://apilayer.net/api/validate";
+	private static final String API_URL = "http://apilayer.net/api/validate";
 	@Value("${numverifi.api.key}")
 	private static String API_KEY;
 
@@ -23,13 +23,25 @@ public class PhoneValidatorService {
 		this.restTemplate = restTemplate;
 	}
 
-	public boolean isValidPhoneNumber(String phoneNumber) {
-		return validatePhoneNumber(phoneNumber).isValid();
+	public boolean isValidPhoneNumber(String phoneNumber, String countryCode) throws InvalidPhoneNumberException {
+		NumVerifyResponseTO response = validatePhoneNumber(phoneNumber, countryCode);
+		if(response!= null)
+			return response.isValid();
+
+		return false;
 	}
 
-	private NumVerifyResponseTO validatePhoneNumber(String phoneNumber) {
-		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(API_URL)
-			.queryParam("access_key", API_KEY)
+	private NumVerifyResponseTO validatePhoneNumber(String phoneNumber, String countryCode) throws InvalidPhoneNumberException {
+
+		if (phoneNumber == null || phoneNumber.isEmpty()) {
+			throw new InvalidPhoneNumberException(phoneNumber, "Phone number is null or empty");
+		}
+
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(API_URL);
+		if (countryCode != null && !countryCode.isEmpty()) {
+			builder.queryParam("country_code", countryCode);
+		}
+		builder.queryParam("access_key", API_KEY)
 			.queryParam("number", phoneNumber);
 
 		// Make the API request and map the response to NumVerifyResponseTO
@@ -47,10 +59,13 @@ public class PhoneValidatorService {
 
 		} catch (HttpClientErrorException e) {
 			handleHttpClientError(e);
+		} catch (InvalidPhoneNumberException invalidPhoneNumberException) {
+			log.warn("Invalid phone number found: {}", phoneNumber);
+			throw invalidPhoneNumberException;
 		} catch (Exception e) {
 			// Log any other unexpected errors
 			log.error("An unexpected error occurred while validating phone number: {}", phoneNumber, e);
-			throw new InvalidPhoneNumberException(phoneNumber, "An expected error occurred while validating phone number");
+			throw new InvalidPhoneNumberException(phoneNumber, "An unexpected error occurred while validating phone number");
 		}
 
 		return response;
