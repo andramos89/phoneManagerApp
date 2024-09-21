@@ -12,13 +12,13 @@ Pre-requisites:
 If you prefer to run a script instead of these commands, you can find this in a 'run.sh' file in the root of the project. In this case please consider executing the command: 'chmod +x run.sh', to give execution permissions to the script to be executed.
 
 
-# Step 1: Build the Spring Boot application
-echo "Building Spring Boot application..."
-./mvnw clean install
-
-# Step 2: Start Docker Compose
+# Step 1: Start Docker Compose
 echo "Starting PostgreSQL with Docker..."
 docker-compose up -d
+
+# Step 2: Build the Spring Boot application (needs connection for running test ContextLoads)
+echo "Building Spring Boot application..."
+./mvnw clean install
 
 # Step 3: Run Spring Boot application
 echo "Running Spring Boot application..."

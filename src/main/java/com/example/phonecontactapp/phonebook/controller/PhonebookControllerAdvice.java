@@ -1,4 +1,4 @@
-package com.example.PhoneContactApp.phonebook.controller;
+package com.example.phonecontactapp.phonebook.controller;
 
 import org.springframework.web.bind.annotation.ControllerAdvice;
 

@@ -1,7 +1,7 @@
-package com.example.PhoneContactApp.phonebook.controller;
+package com.example.phonecontactapp.phonebook.controller;
 
-import com.example.PhoneContactApp.phonebook.models.PhoneRecord;
-import com.example.PhoneContactApp.phonebook.service.PhonebookService;
+import com.example.phonecontactapp.phonebook.models.PhoneRecord;
+import com.example.phonecontactapp.phonebook.service.PhonebookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,17 +16,17 @@ public class PhonebookController {
 
 	@RequestMapping("/findByContactId")
 	public PhoneRecord findByContactId(String contactId) {
-		return null;
+		return phonebookService.findByContactId(contactId);
 	}
 
 	@RequestMapping("/findByPhoneNumber")
 	public PhoneRecord findByPhoneNumber(String phoneNumber) {
-		return null;
+		return phonebookService.findByPhoneNumber(phoneNumber);
 	}
 
 	@RequestMapping("/findByName")
 	public PhoneRecord findByName(String name) {
-		return null;
+		return phonebookService.findByName(name);
 	}
 
 }

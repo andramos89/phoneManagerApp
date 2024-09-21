@@ -1,4 +1,4 @@
-package com.example.PhoneContactApp.phonebook.models;
+package com.example.phonecontactapp.phonebook.models;
 
 import jakarta.persistence.*;
 import lombok.*;
