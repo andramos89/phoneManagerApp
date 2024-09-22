@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 @Getter
@@ -13,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Table(name = "phone_contact")
-public class PhoneRecord {
+public class PhoneRecord implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)

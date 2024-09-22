@@ -1,3 +1,5 @@
+--drop table if exists phone_contact;
+
 CREATE TABLE IF NOT EXISTS phone_contact (
                                              contact_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
                                              phone_number VARCHAR(20) NOT NULL,

@@ -14,8 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class PhoneValidatorService {
 
 	private static final String API_URL = "http://apilayer.net/api/validate";
-	@Value("${numverifi.api.key}")
-	private static String API_KEY;
+	private static String API_KEY = "e3b5771faa9f40d6683982ea3db16e31";
 
 	private final RestTemplate restTemplate;
 
@@ -44,6 +43,7 @@ public class PhoneValidatorService {
 		builder.queryParam("access_key", API_KEY)
 			.queryParam("number", phoneNumber);
 
+		log.info("Validating request: {}", builder.toUriString());
 		// Make the API request and map the response to NumVerifyResponseTO
 		NumVerifyResponseTO response = restTemplate.getForObject(builder.toUriString(), NumVerifyResponseTO.class);
 		try {

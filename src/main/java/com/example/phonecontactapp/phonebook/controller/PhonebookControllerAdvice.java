@@ -2,6 +2,7 @@ package com.example.phonecontactapp.phonebook.controller;
 
 import com.example.phonecontactapp.phonebook.models.exceptions.InvalidNameException;
 import com.example.phonecontactapp.phonebook.models.exceptions.InvalidPhoneNumberException;
+import com.example.phonecontactapp.phonebook.models.exceptions.PhoneContactNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -12,7 +13,7 @@ import org.springframework.web.context.request.WebRequest;
 public class PhonebookControllerAdvice {
 
 	@ExceptionHandler(InvalidPhoneNumberException.class)
-	public ResponseEntity<?> handleInvalidBookingException(InvalidPhoneNumberException ex, WebRequest request) {
+	public ResponseEntity<?> handleInvalidPhoneNumberException(InvalidPhoneNumberException ex, WebRequest request) {
 		if (ex.getMessage() == null || ex.getDetail() == null) {
 			return new ResponseEntity<>(ex, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -26,10 +27,18 @@ public class PhonebookControllerAdvice {
 	}
 
 	@ExceptionHandler(InvalidNameException.class)
-	public ResponseEntity<?> handleInvalidBookingException(InvalidNameException ex, WebRequest request) {
+	public ResponseEntity<?> handleInvalidNumberException(InvalidNameException ex, WebRequest request) {
 		if (ex.getMessage() == null ) {
 			return new ResponseEntity<>(ex, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(PhoneContactNotFoundException.class)
+	public ResponseEntity<?> handlePhoneContactNotFoundException(PhoneContactNotFoundException ex, WebRequest request) {
+		if (ex.getMessage() == null) {
+			return new ResponseEntity<>(ex, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<>(ex.getLocalizedMessage(), HttpStatus.NO_CONTENT);
 	}
 }

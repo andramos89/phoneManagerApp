@@ -3,15 +3,12 @@ package com.example.phonecontactapp.phonebook.controller;
 import com.example.phonecontactapp.phonebook.models.PhoneRecord;
 import com.example.phonecontactapp.phonebook.service.PhonebookService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
-@Controller
+@RestController
 @RequestMapping("/phone")
 public class PhonebookController {
 
@@ -29,18 +26,27 @@ public class PhonebookController {
 	}
 
 	@GetMapping("/findByName")
-	public PhoneRecord findByName(String name) {
+	public List<PhoneRecord> findByName(String name) {
 		return phonebookService.findByName(name);
 	}
 
 	@GetMapping("/all")
 	public List<PhoneRecord> findAll() {
+		//Maybe paginate this?
 		return phonebookService.findAll();
 	}
 
 	@PostMapping("/new")
-	public PhoneRecord add(@RequestBody @Validated PhoneRecord phoneRecord) {
+	public PhoneRecord add(@RequestBody PhoneRecord phoneRecord) {
 		return phonebookService.createPhoneRecord(phoneRecord);
 	}
+
+
+	@GetMapping("")
+	public List<PhoneRecord> filter(@RequestParam(required = false) UUID contactId, @RequestParam(required = false) String name, @RequestParam(required = false) String countryCode, @RequestParam(required = false) String phoneNumber ) {
+		return phonebookService.findAllFiltered(contactId, name, countryCode, phoneNumber);
+	}
+
+
 
 }
