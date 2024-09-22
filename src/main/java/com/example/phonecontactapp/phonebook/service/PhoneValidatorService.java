@@ -3,7 +3,6 @@ package com.example.phonecontactapp.phonebook.service;
 import com.example.phonecontactapp.phonebook.models.NumVerifyResponseTO;
 import com.example.phonecontactapp.phonebook.models.exceptions.InvalidPhoneNumberException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -30,7 +29,7 @@ public class PhoneValidatorService {
 		return false;
 	}
 
-	private NumVerifyResponseTO validatePhoneNumber(String phoneNumber, String countryCode) throws InvalidPhoneNumberException {
+	public NumVerifyResponseTO validatePhoneNumber(String phoneNumber, String countryCode) throws InvalidPhoneNumberException {
 
 		if (phoneNumber == null || phoneNumber.isEmpty()) {
 			throw new InvalidPhoneNumberException(phoneNumber, "Phone number is null or empty");
@@ -71,7 +70,7 @@ public class PhoneValidatorService {
 		return response;
 	}
 
-	private void handleHttpClientError(HttpClientErrorException e) {
+	void handleHttpClientError(HttpClientErrorException e) {
 		int errorStatusCode = e.getStatusCode().value();
 		String responseBody = e.getResponseBodyAsString();
 

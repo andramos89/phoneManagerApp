@@ -31,7 +31,7 @@ public class PhonebookService {
 
 	public PhoneRecord findByPhoneNumber(String phoneNumber, String countryCode) throws InvalidPhoneNumberException, PhoneContactNotFoundException {
 		if (!phoneValidatorService.isValidPhoneNumber(phoneNumber, countryCode)) {
-			return phoneRecordRepository.findByPhoneNumberIgnoreCase(phoneNumber).orElse(new PhoneRecord());
+			throw new InvalidPhoneNumberException(phoneNumber, countryCode);
 		}
 		PhoneRecord phoneRecord = phoneRecordRepository.findByPhoneNumberAndCountryCodeIgnoreCase(phoneNumber, countryCode);
 		if (phoneRecord == null) {
@@ -89,6 +89,8 @@ public class PhonebookService {
 			phoneRecords.addAll(phoneRecordRepository.findByPhoneNumber(phoneNumber));
 		} else if (countryCode != null) {
 			phoneRecords.addAll(phoneRecordRepository.findByCountryCodeIgnoreCase(countryCode));
+		}else {
+			phoneRecords.addAll(phoneRecordRepository.findAll());
 		}
 
 		return phoneRecords;
