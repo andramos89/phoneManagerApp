@@ -44,7 +44,7 @@ class PhonebookControllerTest {
 
 		when(phonebookService.findByContactId(contactId)).thenReturn(mockRecord);
 
-		mockMvc.perform(get("/phone/findByContactId")
+		mockMvc.perform(get("/phone/v1/byContactId")
 				.param("contactId", contactId.toString()))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.contactId").value(contactId.toString()));
@@ -61,7 +61,7 @@ class PhonebookControllerTest {
 
 		when(phonebookService.findByPhoneNumber(phoneNumber, countryCode)).thenReturn(mockRecord);
 
-		mockMvc.perform(get("/phone/findByPhoneNumber")
+		mockMvc.perform(get("/phone/v1/byPhoneNumber")
 				.param("phoneNumber", phoneNumber)
 				.param("countryCode", countryCode))
 			.andExpect(status().isOk())
@@ -79,7 +79,7 @@ class PhonebookControllerTest {
 
 		when(phonebookService.findByName(name)).thenReturn(mockRecords);
 
-		mockMvc.perform(get("/phone/findByName")
+		mockMvc.perform(get("/phone/v1/byName")
 				.param("name", name))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.length()").value(mockRecords.size()));
@@ -88,18 +88,18 @@ class PhonebookControllerTest {
 	}
 
 	@Test
-	void testFindAll() throws Exception {
+	void testFindAllFiltered() throws Exception {
 		PhoneRecord mockRecord1 = new PhoneRecord();
 		PhoneRecord mockRecord2 = new PhoneRecord();
 		List<PhoneRecord> mockRecords = Arrays.asList(mockRecord1, mockRecord2);
 
-		when(phonebookService.findAll()).thenReturn(mockRecords);
+		when(phonebookService.findAllFiltered(null, null, null, null)).thenReturn(mockRecords);
 
-		mockMvc.perform(get("/phone/all"))
+		mockMvc.perform(get("/phone/v1/"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.length()").value(mockRecords.size()));
 
-		verify(phonebookService, times(1)).findAll();
+		verify(phonebookService, times(1)).findAllFiltered(null, null, null, null);
 	}
 
 	@Test
@@ -109,7 +109,7 @@ class PhonebookControllerTest {
 
 		when(phonebookService.createPhoneRecord(any(PhoneRecord.class))).thenReturn(mockRecord);
 
-		mockMvc.perform(post("/phone/new")
+		mockMvc.perform(post("/phone/v1/")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(new ObjectMapper().writeValueAsString(mockRecord)))
 			.andExpect(status().isOk())
@@ -131,7 +131,7 @@ class PhonebookControllerTest {
 
 		when(phonebookService.findAllFiltered(contactId, name, countryCode, phoneNumber)).thenReturn(mockRecords);
 
-		mockMvc.perform(get("/phone")
+		mockMvc.perform(get("/phone/v1/")
 				.param("contactId", contactId.toString())
 				.param("name", name)
 				.param("countryCode", countryCode)

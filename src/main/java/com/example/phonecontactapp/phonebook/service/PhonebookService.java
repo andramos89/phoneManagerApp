@@ -90,7 +90,7 @@ public class PhonebookService {
 		} else if (countryCode != null) {
 			phoneRecords.addAll(phoneRecordRepository.findByCountryCodeIgnoreCase(countryCode));
 		}else {
-			phoneRecords.addAll(phoneRecordRepository.findAll());
+			phoneRecords.addAll(findAll());
 		}
 
 		return phoneRecords;
