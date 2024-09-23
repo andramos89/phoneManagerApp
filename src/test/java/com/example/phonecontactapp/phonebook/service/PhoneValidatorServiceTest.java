@@ -37,7 +37,7 @@ class PhoneValidatorServiceTest {
 		boolean result = phoneValidatorService.isValidPhoneNumber(phoneNumber, countryCode);
 
 		assertTrue(result);
-		verify(restTemplate, times(1)).getForObject(anyString(), eq(NumVerifyResponseTO.class));
+		verify(restTemplate).getForObject(anyString(), eq(NumVerifyResponseTO.class));
 	}
 
 	@Test
@@ -51,7 +51,7 @@ class PhoneValidatorServiceTest {
 
 		assertThrows(InvalidPhoneNumberException.class, () -> phoneValidatorService.isValidPhoneNumber(phoneNumber, countryCode));
 
-		verify(restTemplate, times(1)).getForObject(anyString(), eq(NumVerifyResponseTO.class));
+		verify(restTemplate).getForObject(anyString(), eq(NumVerifyResponseTO.class));
 	}
 
 	@Test
@@ -67,7 +67,7 @@ class PhoneValidatorServiceTest {
 
 		assertNotNull(result);
 		assertTrue(result.isValid());
-		verify(restTemplate, times(1)).getForObject(anyString(), eq(NumVerifyResponseTO.class));
+		verify(restTemplate).getForObject(anyString(), eq(NumVerifyResponseTO.class));
 	}
 
 	@Test
@@ -84,7 +84,7 @@ class PhoneValidatorServiceTest {
 		});
 
 		assertEquals("Invalid phone number: 1234567890", exception.getMessage());
-		verify(restTemplate, times(1)).getForObject(anyString(), eq(NumVerifyResponseTO.class));
+		verify(restTemplate).getForObject(anyString(), eq(NumVerifyResponseTO.class));
 	}
 
 	@Test

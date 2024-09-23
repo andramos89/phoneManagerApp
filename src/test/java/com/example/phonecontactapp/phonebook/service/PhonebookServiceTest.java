@@ -14,7 +14,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -63,7 +62,7 @@ class PhonebookServiceTest {
 		UUID contactId = UUID.randomUUID();
 
 		assertThrows(PhoneContactNotFoundException.class, () -> phonebookService.findByContactId(contactId));
-		verify(phoneRecordRepository, times(1)).findByContactId(contactId);
+		verify(phoneRecordRepository).findByContactId(contactId);
 	}
 
 	@Test
@@ -75,8 +74,8 @@ class PhonebookServiceTest {
 
 		assertNotNull(result);
 		assertEquals(mockPhoneRecord.getPhoneNumber(), result.getPhoneNumber());
-		verify(phoneValidatorService, times(1)).isValidPhoneNumber(eq(mockPhoneRecord.getPhoneNumber()), eq(mockPhoneRecord.getCountryCode()));
-		verify(phoneRecordRepository, times(1)).findByPhoneNumberAndCountryCodeIgnoreCase(eq(mockPhoneRecord.getPhoneNumber()), eq(mockPhoneRecord.getCountryCode()));
+		verify(phoneValidatorService).isValidPhoneNumber(eq(mockPhoneRecord.getPhoneNumber()), eq(mockPhoneRecord.getCountryCode()));
+		verify(phoneRecordRepository).findByPhoneNumberAndCountryCodeIgnoreCase(eq(mockPhoneRecord.getPhoneNumber()), eq(mockPhoneRecord.getCountryCode()));
 	}
 
 	@Test
@@ -85,7 +84,7 @@ class PhonebookServiceTest {
 
 		assertThrows(InvalidPhoneNumberException.class, () -> phonebookService.findByPhoneNumber("invalidPhone", "US"));
 
-		verify(phoneValidatorService, times(1)).isValidPhoneNumber(anyString(), anyString());
+		verify(phoneValidatorService).isValidPhoneNumber(anyString(), anyString());
 		verify(phoneRecordRepository, times(0)).findByPhoneNumberIgnoreCase(anyString());
 	}
 
@@ -101,7 +100,7 @@ class PhonebookServiceTest {
 
 		assertFalse(result.isEmpty());
 		assertEquals(mockPhoneRecord.getName(), result.get(0).getName());
-		verify(phoneRecordRepository, times(1)).findByNameIgnoreCase(anyString());
+		verify(phoneRecordRepository).findByNameIgnoreCase(anyString());
 	}
 
 	@Test
@@ -120,8 +119,8 @@ class PhonebookServiceTest {
 
 		assertNotNull(result);
 		assertEquals(mockPhoneRecord.getPhoneNumber(), result.getPhoneNumber());
-		verify(phoneValidatorService, times(1)).isValidPhoneNumber(anyString(), anyString());
-		verify(phoneRecordRepository, times(1)).save(any(PhoneRecord.class));
+		verify(phoneValidatorService).isValidPhoneNumber(anyString(), anyString());
+		verify(phoneRecordRepository).save(any(PhoneRecord.class));
 	}
 
 	@Test
@@ -130,7 +129,7 @@ class PhonebookServiceTest {
 
 		assertThrows(InvalidPhoneNumberException.class, () -> phonebookService.createPhoneRecord(mockPhoneRecord));
 
-		verify(phoneValidatorService, times(1)).isValidPhoneNumber(anyString(), anyString());
+		verify(phoneValidatorService).isValidPhoneNumber(anyString(), anyString());
 		verify(phoneRecordRepository, never()).save(any(PhoneRecord.class));
 	}
 
@@ -142,7 +141,7 @@ class PhonebookServiceTest {
 
 		assertEquals(1, result.size());
 		assertEquals(mockPhoneRecord.getContactId(), result.get(0).getContactId());
-		verify(phoneRecordRepository, times(1)).findByContactId(any(UUID.class));
+		verify(phoneRecordRepository).findByContactId(any(UUID.class));
 	}
 
 	@Test
@@ -154,6 +153,6 @@ class PhonebookServiceTest {
 
 		assertFalse(result.isEmpty());
 		assertEquals(1, result.size());
-		verify(phoneRecordRepository, times(1)).findAll();
+		verify(phoneRecordRepository).findAll();
 	}
 }

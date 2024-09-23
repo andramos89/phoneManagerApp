@@ -8,8 +8,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 @Configuration
 @EnableWebSecurity
 @EnableAutoConfiguration
@@ -18,11 +16,11 @@ public class SecurityConfiguration {
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-		http.cors(withDefaults()).csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(authorizeHttpRequests ->
-			authorizeHttpRequests
-				.requestMatchers("/phone/v1/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll());
+		http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(authorizeHttpRequests ->
+		//	authorizeHttpRequests
+		//		.requestMatchers("/phone/v1/**", "/swagger-ui/**","/v3/api-docs/**", "/swagger-ui/**", "swagger-resources/**", "swagger-resources").permitAll());
 		//no need for authentication. This can be achieved, p.e. with a jwt token via cors filter
-
+		authorizeHttpRequests.anyRequest().permitAll());
 		return http.build();
 	}
 

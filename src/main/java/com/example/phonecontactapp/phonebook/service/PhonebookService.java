@@ -40,6 +40,12 @@ public class PhonebookService {
 		return phoneRecord;
 	}
 
+	public List<PhoneRecord> findByCountryCode(String countryCode) throws InvalidPhoneNumberException, PhoneContactNotFoundException {
+
+		return phoneRecordRepository.findByCountryCodeIgnoreCase(countryCode);
+
+	}
+
 	public List<PhoneRecord> findByName(String name) {
 		if (name == null || name.isEmpty()) {
 			throw new InvalidNameException("Name cannot be empty");

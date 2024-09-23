@@ -1,40 +1,42 @@
 package com.example.phonecontactapp.phonebook.controller;
 
+import com.example.phonecontactapp.PhoneContactAppApplication;
 import com.example.phonecontactapp.phonebook.models.PhoneRecord;
 import com.example.phonecontactapp.phonebook.service.PhonebookService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@SpringBootTest(classes = PhoneContactAppApplication.class)
+@AutoConfigureMockMvc
 class PhonebookControllerTest {
 
+	private static final String ROOT_URL = "/api/v1/phone/";
+
+	@Autowired
 	private MockMvc mockMvc;
 
-	@Mock
+	@MockBean
 	private PhonebookService phonebookService;
 
 	@InjectMocks
 	private PhonebookController phonebookController;
-
-	@BeforeEach
-	void setUp() {
-		MockitoAnnotations.openMocks(this);
-		mockMvc = MockMvcBuilders.standaloneSetup(phonebookController).build();
-	}
 
 	@Test
 	void testFindByContactId() throws Exception {
@@ -44,30 +46,57 @@ class PhonebookControllerTest {
 
 		when(phonebookService.findByContactId(contactId)).thenReturn(mockRecord);
 
-		mockMvc.perform(get("/phone/v1/byContactId")
-				.param("contactId", contactId.toString()))
+		mockMvc.perform(get(ROOT_URL + contactId)
+			)
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.contactId").value(contactId.toString()));
 
-		verify(phonebookService, times(1)).findByContactId(contactId);
+		verify(phonebookService).findByContactId(contactId);
 	}
 
+	@Test
+	void testFindByCountryCode() throws Exception {
+		String countryCode = "US";
+		UUID contactId = UUID.randomUUID();
+
+		PhoneRecord phoneRecord = new PhoneRecord();
+		phoneRecord.setCountryCode(countryCode);
+		phoneRecord.setContactId(contactId);
+		phoneRecord.setPhoneNumber("1234567890");
+		phoneRecord.setName("John Doe");
+
+		List<PhoneRecord> mockRecords = List.of(phoneRecord);
+
+		when(phonebookService.findAllFiltered(null, null, countryCode, null)).thenReturn(mockRecords);
+
+		mockMvc.perform(get(ROOT_URL)
+				.param("countryCode", countryCode))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.length()").value(1))
+			.andExpect(jsonPath("$[0].phoneNumber").value(phoneRecord.getPhoneNumber()))
+			.andExpect(jsonPath("$[0].contactId").value(contactId.toString()))
+			.andExpect(jsonPath("$[0].countryCode").value(countryCode))
+			.andExpect(jsonPath("$[0].name").value(phoneRecord.getName()));
+
+		verify(phonebookService).findAllFiltered(null, null, countryCode, null);
+	}
 	@Test
 	void testFindByPhoneNumber() throws Exception {
 		String phoneNumber = "1234567890";
 		String countryCode = "US";
 		PhoneRecord mockRecord = new PhoneRecord();
 		mockRecord.setPhoneNumber(phoneNumber);
+		List<PhoneRecord> mockRecords = List.of(mockRecord);
 
-		when(phonebookService.findByPhoneNumber(phoneNumber, countryCode)).thenReturn(mockRecord);
+		when(phonebookService.findAllFiltered(null, null, countryCode, phoneNumber)).thenReturn(mockRecords);
 
-		mockMvc.perform(get("/phone/v1/byPhoneNumber")
-				.param("phoneNumber", phoneNumber)
-				.param("countryCode", countryCode))
+		mockMvc.perform(get(ROOT_URL)
+				.param("countryCode", countryCode )
+				.param("phoneNumber", phoneNumber))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.phoneNumber").value(phoneNumber));
+			.andExpect(jsonPath("$[0].phoneNumber").value(phoneNumber));
 
-		verify(phonebookService, times(1)).findByPhoneNumber(phoneNumber, countryCode);
+		verify(phonebookService).findAllFiltered(null, null,  countryCode, phoneNumber);
 	}
 
 	@Test
@@ -77,14 +106,14 @@ class PhonebookControllerTest {
 		PhoneRecord mockRecord2 = new PhoneRecord();
 		List<PhoneRecord> mockRecords = Arrays.asList(mockRecord1, mockRecord2);
 
-		when(phonebookService.findByName(name)).thenReturn(mockRecords);
+		when(phonebookService.findAllFiltered(null, name, null, null)).thenReturn(mockRecords);
 
-		mockMvc.perform(get("/phone/v1/byName")
+		mockMvc.perform(get(ROOT_URL)
 				.param("name", name))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.length()").value(mockRecords.size()));
 
-		verify(phonebookService, times(1)).findByName(name);
+		verify(phonebookService).findAllFiltered(null, name, null, null);
 	}
 
 	@Test
@@ -95,11 +124,11 @@ class PhonebookControllerTest {
 
 		when(phonebookService.findAllFiltered(null, null, null, null)).thenReturn(mockRecords);
 
-		mockMvc.perform(get("/phone/v1/"))
+		mockMvc.perform(get(ROOT_URL))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.length()").value(mockRecords.size()));
 
-		verify(phonebookService, times(1)).findAllFiltered(null, null, null, null);
+		verify(phonebookService).findAllFiltered(null, null, null, null);
 	}
 
 	@Test
@@ -109,7 +138,7 @@ class PhonebookControllerTest {
 
 		when(phonebookService.createPhoneRecord(any(PhoneRecord.class))).thenReturn(mockRecord);
 
-		mockMvc.perform(post("/phone/v1/")
+		mockMvc.perform(post(ROOT_URL)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(new ObjectMapper().writeValueAsString(mockRecord)))
 			.andExpect(status().isOk())
@@ -131,7 +160,7 @@ class PhonebookControllerTest {
 
 		when(phonebookService.findAllFiltered(contactId, name, countryCode, phoneNumber)).thenReturn(mockRecords);
 
-		mockMvc.perform(get("/phone/v1/")
+		mockMvc.perform(get(ROOT_URL)
 				.param("contactId", contactId.toString())
 				.param("name", name)
 				.param("countryCode", countryCode)
@@ -139,6 +168,6 @@ class PhonebookControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.length()").value(mockRecords.size()));
 
-		verify(phonebookService, times(1)).findAllFiltered(contactId, name, countryCode, phoneNumber);
+		verify(phonebookService).findAllFiltered(contactId, name, countryCode, phoneNumber);
 	}
 }

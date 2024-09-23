@@ -18,4 +18,6 @@ public class PhoneContactAppApplication {
 	public RestTemplate restTemplate() {
 		return new RestTemplate();
 	}
+
 }
+
